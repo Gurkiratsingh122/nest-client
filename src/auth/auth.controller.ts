@@ -12,9 +12,6 @@ export class AuthController {
   @ApiBody({ type: RegisterDto })
   @ApiOperation({ summary: 'Create a new user' })
   register(@Body() dto: RegisterDto) {
-    if (dto.password.length < 6) {
-      throw new BadRequestException('Password must be atleast 6 chars long');
-    }
     return this.authService.register(dto);
   }
 
@@ -24,9 +21,6 @@ export class AuthController {
     accessToken: string;
     user: { _id: string; email: string; name: string };
   }> {
-    if (dto.password.length < 6) {
-      throw new BadRequestException('Password must be atleast 6 chars long');
-    }
     return this.authService.login(dto);
   }
 }

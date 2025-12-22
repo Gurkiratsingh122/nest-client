@@ -18,6 +18,8 @@ export class RegisterDto {
   @ApiProperty({
     example: '123456',
   })
-  @MinLength(6)
+  @MinLength(6, {
+    message: 'Password must be at least 6 characters long',
+  })
   password: string;
 }
