@@ -3,6 +3,7 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { User } from './user.schema';
 import { CreateUserDto } from './dto/create-user.dto';
+import { UpdateUserDto } from './dto/update-user.dto';
 
 @Injectable()
 export class UserService {
@@ -12,7 +13,20 @@ export class UserService {
   ) {}
 
   create(user: CreateUserDto) {
-    return this.userModel.create(user);
+    const adminPermissions = [
+      'create:user',
+      'update:user',
+      'delete:user',
+      'read:post',
+    ];
+
+    // const editorPermissions = ['update:post', 'read:post'];
+    const role = 'admin';
+    return this.userModel.create({
+      ...user,
+      permissions: adminPermissions,
+      role: role,
+    });
   }
 
   findAll() {
@@ -29,7 +43,7 @@ export class UserService {
     return user;
   }
 
-  async updateUser(id: string, updateData: CreateUserDto) {
+  async updateUser(id: string, updateData: UpdateUserDto) {
     const updatedUser = await this.userModel.findByIdAndUpdate(id, updateData, {
       new: true,
     });

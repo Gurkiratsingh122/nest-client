@@ -20,8 +20,12 @@ import {
 } from '@nestjs/swagger';
 import { UserService } from './user.service';
 import { CreateUserDto } from './dto/create-user.dto';
-import { User } from './user.interface';
 import { JwtAuthGuard } from 'src/auth/jwit-auth.guard';
+import { AuthGuard } from '@nestjs/passport';
+import { PermissionsGuard } from 'src/auth/guards/permissions.guard';
+import { Permissions } from 'src/auth/decorators/permissions.decorator';
+import { Permission } from 'src/auth/enums/permissions.enum';
+import { UpdateUserDto } from './dto/update-user.dto';
 
 @ApiTags('Users')
 @Controller('users')
@@ -30,7 +34,8 @@ export class UsersController {
 
   // GET /users
   @Get()
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(AuthGuard('jwt'), PermissionsGuard)
+  @Permissions(Permission.CREATE_USER)
   @ApiBearerAuth('access-token')
   @ApiOperation({ summary: 'Get all users' })
   getUsers() {
@@ -39,6 +44,8 @@ export class UsersController {
 
   @Post()
   @ApiBearerAuth('access-token')
+  @UseGuards(AuthGuard('jwt'), PermissionsGuard)
+  @Permissions(Permission.CREATE_USER)
   @ApiBody({ type: CreateUserDto })
   @ApiOperation({ summary: 'Create a new user' })
   createUser(@Body() user: CreateUserDto) {
@@ -49,6 +56,8 @@ export class UsersController {
   @Get(':id')
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth('access-token')
+  @UseGuards(AuthGuard('jwt'), PermissionsGuard)
+  @Permissions(Permission.READ_PROFILE)
   @ApiOperation({ summary: 'Get user by ID' })
   @ApiParam({ name: 'id', type: String })
   @ApiResponse({ status: 200, description: 'User found' })
@@ -60,17 +69,21 @@ export class UsersController {
   @Put(':id')
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth('access-token')
+  @UseGuards(AuthGuard('jwt'), PermissionsGuard)
+  @Permissions(Permission.UPDATE_USER)
   @ApiOperation({ summary: 'Update user by ID' })
   @ApiResponse({ status: 200, description: 'User found' })
   @ApiResponse({ status: 404, description: 'User not found' })
-  @ApiBody({ type: CreateUserDto })
-  updateUser(@Param('id') id: string, @Body() updateData: CreateUserDto) {
+  @ApiBody({ type: UpdateUserDto })
+  updateUser(@Param('id') id: string, @Body() updateData: UpdateUserDto) {
     return this.usersService.updateUser(id, updateData);
   }
 
   @Delete(':id')
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth('access-token')
+  @UseGuards(AuthGuard('jwt'), PermissionsGuard)
+  @Permissions(Permission.DELETE_USER)
   @ApiOperation({ summary: 'Delete user by ID' })
   @ApiResponse({ status: 200, description: 'User deleted' })
   @ApiResponse({ status: 404, description: 'User not found' })

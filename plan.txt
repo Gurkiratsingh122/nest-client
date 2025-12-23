@@ -1,0 +1,218 @@
+🟢 PHASE 0 — Setup & Baseline (Week 0 – 2 days)                         //Done
+
+  Goal: Ensure solid foundation (quick, no overlearning)
+
+  Topics
+
+Project structure (feature-based)
+
+Global pipes & filters setup
+
+ConfigModule & env handling
+
+Database connection + migrations
+
+Hands-on
+
+Bootstrap a real project (Auth + Users module)
+
+⏱ Time: 2 days
+
+🔐 PHASE 1 — Authentication & Authorization (Weeks 1–3)                   // DOne
+
+Goal: Build a secure, scalable auth system
+
+Week 1 — Authentication Hardening
+
+JWT internals (access vs refresh)
+
+Passport strategies
+
+AuthGuard deep dive
+
+Login / Register flows
+
+Password hashing best practices   
+
+Hands-on
+
+Implement login/signup 
+
+Protect routes using guards
+
+Week 2 — Authorization (Roles & Permissions)
+
+RBAC vs PBAC
+
+Role & Permission tables
+
+Custom decorators (@Roles, @Permissions)
+
+Multi-guard setup
+
+Policy-based access (advanced)
+
+Hands-on
+
+Admin / User permissions
+
+Route-level protection
+
+Week 3 — Refresh Tokens & Cookies
+
+Refresh token rotation
+
+Secure storage (hashed tokens)
+
+Cookie-based auth
+
+Logout & token revocation
+
+CSRF basics
+
+Hands-on
+
+Full auth lifecycle
+
+SPA-ready backend auth
+
+⏱ Phase Outcome:
+✅ Senior-level auth knowledge
+
+🔁 PHASE 2 — Request / Response Control (Weeks 4–5)
+
+Goal: Clean, consistent, professional APIs
+
+Week 4 — Serialization & Error Handling
+
+class-transformer
+
+Data hiding & views
+
+Global exception filters
+
+Custom business exceptions
+
+Week 5 — Interceptors & Middleware
+
+Logging interceptor
+
+Response transformer
+
+Timeout interceptor
+
+Middleware vs Interceptor
+
+Request lifecycle mastery
+
+Hands-on
+
+Standardized API response format
+
+Centralized error handling
+
+⚡ PHASE 3 — Data, Performance & Scaling (Weeks 6–7)
+
+Goal: APIs that scale and perform
+
+Week 6 — Pagination, Filtering & Search
+
+Offset vs Cursor pagination
+
+Query DTOs
+
+Dynamic filters
+
+Sorting patterns
+
+Week 7 — Performance Optimization
+
+Indexing strategy
+
+N+1 problem
+
+Transactions
+
+Query optimization
+
+Caching (Redis basics)
+
+Hands-on
+
+Optimized listing endpoints
+
+Cached heavy queries
+
+🧪 PHASE 4 — Quality, Security & DX (Weeks 8–9)
+
+Goal: Production-grade safety & confidence
+
+Week 8 — Testing
+
+Unit testing services
+
+Mocking DB & JWT
+
+E2E testing auth flows
+
+Test environment setup
+
+Week 9 — Security & API DX
+
+Rate limiting
+
+Helmet & security headers
+
+Swagger documentation
+
+API versioning
+
+Hands-on
+
+Fully documented secure API
+
+🚀 PHASE 5 — Production & Deployment (Weeks 10–11)
+
+Goal: Deploy like a professional backend dev
+
+Week 10 — Logging & Monitoring
+
+Structured logging
+
+Request tracing
+
+Error monitoring concepts
+
+Week 11 — Deployment
+
+Dockerizing NestJS
+
+Environment configs
+
+CI/CD basics
+
+Cloud deployment overview
+
+Hands-on
+
+Deploy backend to cloud
+
+Production-ready setup
+
+🏁 PHASE 6 — Capstone Project (Week 12)
+
+Goal: Showcase real-world skills
+
+Build
+
+Multi-role backend (Admin/User)
+
+Auth + permissions
+
+Pagination & caching
+
+Tests
+
+Docker + deployment
+
+📌 This becomes your portfolio backend

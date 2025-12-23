@@ -1,10 +1,15 @@
 // auth/auth.service.ts
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import {
+  ConflictException,
+  Injectable,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
 import { RegisterDto } from './dto/register.dto';
 import { UserService } from 'src/users/user.service';
 import { LoginDto } from './dto/login.dto';
+import { permission } from 'process';
 
 interface AuthResponse {
   accessToken: string;
@@ -12,6 +17,8 @@ interface AuthResponse {
     _id: string;
     email: string;
     name: string;
+    permissions: string[];
+    role: string;
   };
 }
 
@@ -25,7 +32,7 @@ export class AuthService {
   async register(dto: RegisterDto) {
     const existingUser = await this.userService.findByEmail(dto.email);
     if (existingUser) {
-      throw new UnauthorizedException('Email already registered');
+      throw new ConflictException('Email already registered');
     }
 
     const hashedPassword = await bcrypt.hash(dto.password, 10);
@@ -45,24 +52,30 @@ export class AuthService {
     const isMatch = await bcrypt.compare(dto.password, user.password);
     if (!isMatch) throw new UnauthorizedException('Invalid credentials');
 
+    const { accessToken } = this.generateToken(user);
+
     return {
-      accessToken: this.jwtService.sign({
-        sub: user._id,
-        email: user.email,
-      }),
+      accessToken: accessToken,
       user: {
         _id: user._id.toString(),
         email: user.email,
         name: user.name,
+        permissions: user.permissions,
+        role: user.role,
       },
     };
   }
 
   private generateToken(user: any) {
-    const payload = { sub: user._id, email: user.email };
+    const payload = {
+      sub: user._id,
+      email: user.email,
+      permissions: user.permissions,
+      role: user.role,
+    };
 
     return {
-      accessToken: this.jwtService.sign(payload),
+      accessToken: this.jwtService.sign(payload, { expiresIn: '7d' }),
     };
   }
 }
