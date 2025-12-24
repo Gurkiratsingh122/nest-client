@@ -34,7 +34,7 @@ export class UserService {
   }
 
   async getUserById(id: string) {
-    const user = await this.userModel.findById(id);
+    const user = await this.userModel.findById(id).lean();
 
     if (!user) {
       throw new NotFoundException('User not found');
@@ -54,6 +54,21 @@ export class UserService {
     return updatedUser;
   }
 
+  async updateRefreshToken(id: string, hash: string) {
+    const updatedUser = await this.userModel.findByIdAndUpdate(
+      id,
+      { refreshTokenHash: hash },
+      {
+        new: false,
+      },
+    );
+
+    if (!updatedUser) {
+      throw new NotFoundException('User not found');
+    }
+    return updatedUser;
+  }
+
   async deleteUser(id: string) {
     const deletedUser = await this.userModel.findByIdAndDelete(id);
     if (!deletedUser) {
@@ -64,5 +79,11 @@ export class UserService {
 
   async findByEmail(email: string) {
     return this.userModel.findOne({ email });
+  }
+
+  async clearRefreshToken(userId: string) {
+    return this.userModel.findByIdAndUpdate(userId, {
+      refreshTokenHash: null,
+    });
   }
 }

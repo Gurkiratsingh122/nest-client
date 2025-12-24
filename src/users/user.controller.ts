@@ -9,6 +9,7 @@ import {
   Post,
   Put,
   UseGuards,
+  UseInterceptors,
 } from '@nestjs/common';
 import {
   ApiBearerAuth,
@@ -26,6 +27,9 @@ import { PermissionsGuard } from 'src/auth/guards/permissions.guard';
 import { Permissions } from 'src/auth/decorators/permissions.decorator';
 import { Permission } from 'src/auth/enums/permissions.enum';
 import { UpdateUserDto } from './dto/update-user.dto';
+import { plainToInstance } from 'class-transformer';
+import { UserResponseDto } from './dto/user-response.dto';
+import { ResponseInterceptor } from 'src/common/interceptors/response.interceptor';
 
 @ApiTags('Users')
 @Controller('users')
@@ -33,6 +37,7 @@ export class UsersController {
   constructor(private readonly usersService: UserService) {}
 
   // GET /users
+  @UseInterceptors(ResponseInterceptor)
   @Get()
   @UseGuards(AuthGuard('jwt'), PermissionsGuard)
   @Permissions(Permission.CREATE_USER)
@@ -57,13 +62,13 @@ export class UsersController {
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth('access-token')
   @UseGuards(AuthGuard('jwt'), PermissionsGuard)
-  @Permissions(Permission.READ_PROFILE)
+  @Permissions(Permission.CREATE_USER)
   @ApiOperation({ summary: 'Get user by ID' })
   @ApiParam({ name: 'id', type: String })
   @ApiResponse({ status: 200, description: 'User found' })
   @ApiResponse({ status: 404, description: 'User not found' })
   getUserById(@Param('id') id: string) {
-    return this.usersService.getUserById(id);
+    return plainToInstance(UserResponseDto, this.usersService.getUserById(id));
   }
 
   @Put(':id')

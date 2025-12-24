@@ -12,11 +12,14 @@ export class User extends Document {
   @Prop({ unique: true })
   email: string;
 
-  @Prop({ required: true, default: "user" })
+  @Prop({ required: true, default: 'user' })
   role: string;
 
   @Prop({ required: true, default: [] })
   permissions: string[];
+
+  @Prop()
+  refreshTokenHash: string;
 }
 
 export const UserSchema = SchemaFactory.createForClass(User);
