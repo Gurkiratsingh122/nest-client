@@ -14,41 +14,46 @@ export class UserService {
   ) {}
 
   create(user: CreateUserDto) {
-    const adminPermissions = [
-      'create:user',
-      'update:user',
-      'delete:user',
-      'read:post',
-    ];
+    // const adminPermissions = [
+    //   'create:user',
+    //   'update:user',
+    //   'delete:user',
+    //   'read:post',
+    // ];
 
     // const editorPermissions = ['update:post', 'read:post'];
-    const role = 'admin';
+    // const role = 'admin';
     return this.userModel.create({
       ...user,
-      permissions: adminPermissions,
-      role: role,
+      // permissions: adminPermissions,
+      // role: role,
     });
   }
 
   async findAll(query: PaginationDto & { role?: string }) {
-    const { page, limit, search, role } = query;
+    const { page = 1, limit = 10, search, role } = query;
 
     const filter: any = {};
 
+    // ✅ TEXT SEARCH (uses index)
     if (search) {
-      filter.$or = [
-        { name: { $regex: search, $options: 'i' } },
-        { email: { $regex: search, $options: 'i' } },
-      ];
+      filter.$text = { $search: search };
     }
 
+    // ✅ ROLE FILTER (uses compound index)
     if (role) {
       filter.role = role;
     }
+
     const skip = (page - 1) * limit;
 
     const [data, total] = await Promise.all([
-      this.userModel.find(filter).skip(skip).limit(limit).lean(),
+      this.userModel
+        .find(filter)
+        .sort({ createdAt: -1 }) // important for index usage
+        .skip(skip)
+        .limit(limit)
+        .lean(),
       this.userModel.countDocuments(filter),
     ]);
 
@@ -56,6 +61,37 @@ export class UserService {
       page,
       limit,
       total,
+      data,
+    };
+  }
+
+  async findAllUsingCursor(
+    query: PaginationDto & { role?: string; cursor?: string },
+  ) {
+    const { limit = 10, search, role, cursor } = query;
+
+    const filter: any = {};
+
+    if (search) {
+      filter.$text = { $search: search };
+    }
+
+    if (role) {
+      filter.role = role;
+    }
+
+    if (cursor) {
+      filter.createdAt = { $lt: new Date(cursor) };
+    }
+
+    const data = await this.userModel
+      .find(filter)
+      .sort({ createdAt: -1 })
+      .limit(limit)
+      .lean();
+
+    return {
+      nextCursor: data.length ? data[data.length - 1].createdAt : null,
       data,
     };
   }

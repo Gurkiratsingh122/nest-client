@@ -1,6 +1,6 @@
 // auth/dto/register.dto.ts
 import { ApiProperty } from '@nestjs/swagger';
-import { IsEmail, IsString, MinLength } from 'class-validator';
+import { IsArray, IsEmail, IsString, MinLength } from 'class-validator';
 
 export class RegisterDto {
   @ApiProperty({
@@ -22,4 +22,10 @@ export class RegisterDto {
     message: 'Password must be at least 6 characters long',
   })
   password: string;
+
+  @IsArray()
+  permissions: string[];
+
+  @IsString()
+  role: string
 }

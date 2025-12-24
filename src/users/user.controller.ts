@@ -54,6 +54,20 @@ export class UsersController {
     return this.usersService.findAll(query);
   }
 
+  @UseInterceptors(ResponseInterceptor)
+  @Get('/using-cursor')
+  @UseGuards(AuthGuard('jwt'), PermissionsGuard)
+  @Permissions(Permission.CREATE_USER)
+  @ApiBearerAuth('access-token')
+  @ApiOperation({ summary: 'Get all users' })
+  @ApiQuery({ name: 'cursor', type: String, required: false })
+  @ApiQuery({ name: 'limit', type: String, required: false })
+  @ApiQuery({ name: 'search', type: String, required: false })
+  @ApiQuery({ name: 'role', type: String, required: false })
+  getUsersUsingCursor(@Query() query: PaginationDto) {
+    return this.usersService.findAllUsingCursor(query);
+  }
+
   @Post()
   @ApiBearerAuth('access-token')
   @UseGuards(AuthGuard('jwt'), PermissionsGuard)
