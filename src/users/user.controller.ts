@@ -8,6 +8,7 @@ import {
   ParseUUIDPipe,
   Post,
   Put,
+  Query,
   UseGuards,
   UseInterceptors,
 } from '@nestjs/common';
@@ -16,6 +17,7 @@ import {
   ApiBody,
   ApiOperation,
   ApiParam,
+  ApiQuery,
   ApiResponse,
   ApiTags,
 } from '@nestjs/swagger';
@@ -30,6 +32,7 @@ import { UpdateUserDto } from './dto/update-user.dto';
 import { plainToInstance } from 'class-transformer';
 import { UserResponseDto } from './dto/user-response.dto';
 import { ResponseInterceptor } from 'src/common/interceptors/response.interceptor';
+import { PaginationDto } from './dto/pagination.dto';
 
 @ApiTags('Users')
 @Controller('users')
@@ -43,8 +46,12 @@ export class UsersController {
   @Permissions(Permission.CREATE_USER)
   @ApiBearerAuth('access-token')
   @ApiOperation({ summary: 'Get all users' })
-  getUsers() {
-    return this.usersService.findAll();
+  @ApiQuery({ name: 'page', type: String, required: false })
+  @ApiQuery({ name: 'limit', type: String, required: false })
+  @ApiQuery({ name: 'search', type: String, required: false })
+  @ApiQuery({ name: 'role', type: String, required: false })
+  getUsers(@Query() query: PaginationDto) {
+    return this.usersService.findAll(query);
   }
 
   @Post()

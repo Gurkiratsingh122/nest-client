@@ -4,6 +4,7 @@ import { Model } from 'mongoose';
 import { User } from './user.schema';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
+import { PaginationDto } from './dto/pagination.dto';
 
 @Injectable()
 export class UserService {
@@ -29,8 +30,34 @@ export class UserService {
     });
   }
 
-  findAll() {
-    return this.userModel.find();
+  async findAll(query: PaginationDto & { role?: string }) {
+    const { page, limit, search, role } = query;
+
+    const filter: any = {};
+
+    if (search) {
+      filter.$or = [
+        { name: { $regex: search, $options: 'i' } },
+        { email: { $regex: search, $options: 'i' } },
+      ];
+    }
+
+    if (role) {
+      filter.role = role;
+    }
+    const skip = (page - 1) * limit;
+
+    const [data, total] = await Promise.all([
+      this.userModel.find(filter).skip(skip).limit(limit).lean(),
+      this.userModel.countDocuments(filter),
+    ]);
+
+    return {
+      page,
+      limit,
+      total,
+      data,
+    };
   }
 
   async getUserById(id: string) {
